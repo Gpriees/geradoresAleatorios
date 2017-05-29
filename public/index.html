@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Angular Material style sheet -->
+    <link rel="stylesheet" href="./vendors/angular-material/angular-material.css">
+</head>
+
+<body ng-app="app" ng-controller="AppController as appViewModel">
+    <span class="md-body-1" id="log">  Semente:  {{appViewModel.semente}}   </span>
+    <br>
+    <md-button ng-click="appViewModel.quadradoDoMeio()">Quadrado Do Meio</md-button>
+    <br>
+    <md-button ng-click="appViewModel.congruenteLinearPotencias()">Congruente Linear Baseado em Potências</md-button>
+    <br>
+    <md-button ng-click="appViewModel.congruenteLinearAdaptado()">Congruente Linear Adaptado</md-button>
+    <br>
+    <md-button ng-click="appViewModel.congruenteLinearMultiplicativo()">Congruente Linear Multiplicativo</md-button>
+    <br>
+    <md-button ng-click="appViewModel.geradorAtrasodeFibonacci()">Gerador Atraso de Fibonacci</md-button>
+
+
+    <script src="./vendors/jquery/dist/jquery.js"></script>
+    <script src="./vendors/angular/angular.js"></script>
+    <script src="./vendors/angular-material/angular-material.js"></script>
+    <script src="./vendors/angular-animate/angular-animate.js"></script>
+    <script src="./vendors/angular-aria/angular-aria.js"></script>
+    <script src="./vendors/seedrandom/seedrandom.js"></script>
+
+    <script src="./javascripts/general.js"></script>
+    <script src="./javascripts/app/app.js"></script>
+
+</body>
+
+</html>
