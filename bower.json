@@ -1,0 +1,20 @@
+{
+  "name": "geradoresaleatorios",
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "https://github.com/Gpriees/geradoresAleatorios",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.2.1",
+    "angular-material": "^1.1.4",
+    "seedrandom": "^2.4.3",
+    "angular": "^1.6.4"
+  }
+}
