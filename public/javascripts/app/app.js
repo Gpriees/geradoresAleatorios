@@ -24,12 +24,12 @@
         
 
         function quadradoDoMeio() {
-            console.log('appViewModel.semente = ', appViewModel.semente);
+            console.log('semente = ', appViewModel.semente);
             console.log('-----');
 
             x1 = appViewModel.semente;
 
-            for (i = 1; i < 11; i++) {
+            for (i = 0; i < 500; i++) {
                 x1 = (x1 * x1);
 
                 y = "" + x1;
@@ -44,31 +44,31 @@
                         res++;
                         x1 = res;
                     }
-                    else { x1 = res; }
+                    else {x1 = res; }
                 }
                 else {
 
                 }
 
-                console.log(i, ': ', 'x1 =', x1);
+                console.log(x1);
             }
             console.log('-----');
         }
 
         function congruenteLinearPotencias() { // Xn = a^n % m
             a = Math.E;
-            m = 99;
-            console.log('appViewModel.semente = ', appViewModel.semente);
+            m = 100;
+            console.log('semente = ', appViewModel.semente);
             console.log('A = ', a);
             console.log('M = ', m);
             console.log('-----');
 
             x1 = appViewModel.semente;
 
-            for (i = 1; i < 100; i++) {
+            for (i = 0; i < 500; i++) {
                 x1 = (Math.pow(a, x1) % m);
-                console.log(x1);
-                console.log(i, ': ', 'x1 =', parseInt(x1, 10));
+                x1 = x1+1;
+                console.log(parseInt(x1, 10));
             }
             console.log('-----');
 
@@ -76,9 +76,9 @@
 
         function congruenteLinearAdaptado() { // Xn+1 = (a*Xn +b) % m
             a = Math.E;
-            b = 11;
+            b = 1234;
             m = 100;
-            console.log('appViewModel.semente = ', appViewModel.semente);
+            console.log('semente = ', appViewModel.semente);
             console.log('A = ', a);
             console.log('B = ', b);
             console.log('M = ', m);
@@ -86,10 +86,10 @@
 
             x1 = appViewModel.semente;
 
-            for (i = 1; i < 100; i++) {
+            for (i = 0; i < 500; i++) {
                 x1 = (((a * x1) + b) % m);
-                x1 = x1 + 1;
-                console.log(i, ': ', 'x1 =', parseInt(x1, 10));
+                x1 = x1 - 1;
+                console.log(parseInt(x1, 10));
             }
             console.log('-----');
         }
@@ -104,10 +104,10 @@
 
             x1 = appViewModel.semente;
 
-            for (i = 1; i < 100; i++) {
+            for (i = 0; i < 500; i++) {
                 x1 = ((a * x1) % m);
                 x1 = x1 + 1;
-                console.log(i, ': ', 'x1 =', parseInt(x1, 10));
+                console.log(parseInt(x1, 10));
             }
             console.log('-----');
         }
