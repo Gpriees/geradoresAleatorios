@@ -10,15 +10,30 @@
 <body ng-app="app" ng-controller="AppController as appViewModel">
     <span class="md-body-1" id="log">  Semente:  {{appViewModel.semente}}   </span>
     <br>
+    
     <md-button ng-click="appViewModel.quadradoDoMeio()">Quadrado Do Meio</md-button>
+    <p>{{arrayResultadoQuadradoDoMeio}}</p>
     <br>
+    
     <md-button ng-click="appViewModel.congruenteLinearPotencias()">Congruente Linear Baseado em Potências</md-button>
+    <p>{{arrayResultadoCongruenteLinearBaseadoEmPotencias}}</p>
     <br>
+    
     <md-button ng-click="appViewModel.congruenteLinearAdaptado()">Congruente Linear Adaptado</md-button>
+    <p>{{arrayCongruenteLinearAdaptado}}</p>
     <br>
+    
     <md-button ng-click="appViewModel.congruenteLinearMultiplicativo()">Congruente Linear Multiplicativo</md-button>
+    <p>{{arrayCongruenteLinearMultiplicativo}}</p>
     <br>
+    
     <md-button ng-click="appViewModel.geradorAtrasodeFibonacci()">Gerador Atraso de Fibonacci</md-button>
+    <p>{{arrayGeradorAtrasodeFibonacci}}</p>
+    <br>
+    
+    <md-button ng-click="appViewModel.congruenteLinearMultiplicativo2()">Congruente Linear Multiplicativo 2</md-button>
+    <p>{{arrayCongruenteLinearMultiplicativo2}}</p>
+    <br>
 
 
     <script src="./vendors/jquery/dist/jquery.js"></script>
