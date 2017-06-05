@@ -1,6 +1,14 @@
 var PD = require("probability-distributions");
 
-const amostra = [1, 2, 3.9, 4, 5.13];
+Array.prototype.max = function () {
+    return Math.max.apply(null, this);
+};
+
+Array.prototype.min = function () {
+    return Math.min.apply(null, this);
+};
+
+var amostra = [1, 2, 3, 4, 5];
 
 var stdev = function (amostra) {
     var tamanhoAmostra = amostra.length;
@@ -29,37 +37,70 @@ var stdev = function (amostra) {
     }
 
     return {
-        media: (media * 100) / 100,
+        media: Math.round(media * 100) / 100,
         variancia: variancia,
-        desvioPadrao: (stddev * 100) / 100
+        desvioPadrao: Math.round(stddev * 100) / 100
     };
 };
 
 var distribuicao = {
-    poisson: 0
-    , triangular: 1
-    , uniforme: 2
-    , normal: 3
+    poisson: { identificador: 1 }
+    , triangular: { identificador: 2 }
+    , uniforme: { identificador: 3 }
+    , normal: { identificador: 4 }
 }
 
-function definirMelhorDistribuicao(distribuicao) {
+function obterMelhorDistribuicao(amostra) {
+    var amostraCalculada = stdev(amostra), poisson, triangular, uniforme, normal;
 
+    distribuicao.poisson.soma = amostra.reduce(function (numero, unidadeAmostra) {
+        return numero += PD.dpois(unidadeAmostra, amostraCalculada.media);
+    });
+
+    distribuicao.uniforme.soma = amostra.reduce(function (numero, unidadeAmostra) {
+        return numero += PD.dunif(unidadeAmostra, amostra.min(), amostra.max());
+    });
+
+    distribuicao.normal.soma = amostra.reduce(function (numero, unidadeAmostra) {
+        return numero += PD.dnorm(unidadeAmostra, amostraCalculada.media, amostraCalculada.desvioPadrao)
+    });
+    var menorDistribuicao = Math.min.apply(null, Object.keys(distribuicao).map(function (nome) { return distribuicao[nome].soma }));
+
+    return obterDistribuicaoComMenorValor(distribuicao)
 }
 
-function gerarNumeroRandomico(distribuicao) {
+function obterDistribuicaoComMenorValor(distribuicao) {
 
-    switch (distribuicao) {
-        case distribuicao.poisson:
-            PD.dpois(x, )
+    var verificaUndefined = function (elemento) { return elemento !== undefined }
+
+    var distribuicaoFiltradaPorValor = Object.keys(distribuicao).map(
+        function (nome) {
+            return distribuicao[nome].soma
+        }).filter(verificaUndefined)
+    
+    distribuicaoFiltradaPorValorQuiQuadrado = distribuicaoFiltradaPorValor.map(function(distribuicao) {
+   //    return PD.rchisq(distribuicao,amostra.length - 1)
+    })
+
+    var menorDistribuicao = Math.min.apply(null, distribuicaoFiltradaPorValor);
+
+    var nomeDistribuicao = Object.keys(distribuicao).filter(function (nome) { return distribuicao[nome].soma === menorDistribuicao; })[0]
+
+    return distribuicao[nomeDistribuicao];
+}
+
+function gerarNumeroRandomico(melhorDistribuicao) {
+    switch (melhorDistribuicao.identificador) {
+        case distribuicao.poisson.identificador:
+            console.log(melhorDistribuicao)    
             break;
-        case distribuicao.triangular:
+        case distribuicao.triangular.identificador:
             break;
-        case distribuicao.uniforme:
-            PD.runif(100);
+        case distribuicao.uniforme.identificador:
             break;
-        case distribuicao.normal:
-            PD.lnorm(10);
+        case distribuicao.normal.identificador:
             break
     }
-
 }
+
+gerarNumeroRandomico(obterMelhorDistribuicao(amostra))
