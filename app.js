@@ -34,7 +34,6 @@ app.use(function (req, res, next) {
 
 
 // require('./parte-2')
-require('./primos')
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
