@@ -23,6 +23,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+require('./numeroRandomico')
+
 app.use('/', index);
 
 // catch 404 and forward to error handler
@@ -33,7 +35,6 @@ app.use(function (req, res, next) {
 });
 
 
-// require('./parte-2')
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
