@@ -1,15 +1,15 @@
 const jStat = require('jStat').jStat;
 
 const experimento = [89, 95, 5, 37, 82, 98, 63, 76, 11, 8, 64,
-                    81, 13, 22, 76, 81, 13, 54, 59, 72, 11,
-                    54, 90, 69, 52, 38, 69, 72, 97, 26, 75,
-                    50, 13, 20, 98, 90, 33, 10, 46, 22, 81,
-                    100, 77, 46, 93, 55, 61, 94, 34, 13, 35,
-                    88, 61, 65, 17, 4, 79, 30, 91, 23, 31,
-                    66, 22, 73, 92, 67, 19, 64, 64, 89, 87,
-                    74, 40, 32, 100, 22, 65, 74, 18, 63, 41,
-                    23, 67, 99, 91, 12, 90, 48, 90, 29, 3,
-                    9, 76, 95, 68, 63, 4, 58, 37, 38].map(amostra => Math.round(amostra))
+    81, 13, 22, 76, 81, 13, 54, 59, 72, 11,
+    54, 90, 69, 52, 38, 69, 72, 97, 26, 75,
+    50, 13, 20, 98, 90, 33, 10, 46, 22, 81,
+    100, 77, 46, 93, 55, 61, 94, 34, 13, 35,
+    88, 61, 65, 17, 4, 79, 30, 91, 23, 31,
+    66, 22, 73, 92, 67, 19, 64, 64, 89, 87,
+    74, 40, 32, 100, 22, 65, 74, 18, 63, 41,
+    23, 67, 99, 91, 12, 90, 48, 90, 29, 3,
+    9, 76, 95, 68, 63, 4, 58, 37, 38].map(amostra => Math.round(amostra))
 
 let experimentoCalculado = {
     dados: experimento
@@ -18,7 +18,7 @@ let experimentoCalculado = {
     , desvioPadrao: jStat.stdev(experimento)
     , maiorValor: jStat.max(experimento)
     , menorValor: jStat.min(experimento)
-    , valorMaisFrequente: jStat.mode(experimento)
+    , valorMaisFrequente: jStat.mode(experimento)[0]
 }
 
 let distribuicao = {
@@ -92,23 +92,19 @@ let gerarNumeroRandomico = () => {
         , uniforme = obterAmostraCalculadaPorDistribuicao(distribuicao.uniforme, experimentoCalculado)
         , normal = obterAmostraCalculadaPorDistribuicao(distribuicao.normal, experimentoCalculado);
 
-    let melhorDistribuicao = obterMelhorDistribuicao([poisson, uniforme, normal]);    
-    
+    let melhorDistribuicao = obterMelhorDistribuicao([poisson, triangular, uniforme, normal]);
+
+    let valorExperimento = Math.floor(Math.random() * 100) + 1;
     switch (melhorDistribuicao.distribuicaoId) {
         case distribuicao.poisson.identificador:
-        console.log(melhorDistribuicao)    
-            break;
+            return jStat.poisson.pdf(valorExperimento, experimentoCalculado.media);
         case distribuicao.triangular.identificador:
-            console.log(melhorDistribuicao)    
-            break;
+            return jStat.triangular.pdf(valorExperimento, experimentoCalculado.menorValor, experimentoCalculado.maiorValor, experimentoCalculado.valorMaisFrequente);
         case distribuicao.uniforme.identificador:
-            console.log(melhorDistribuicao)    
-            break;
+            return jStat.uniform.pdf(valorExperimento, experimentoCalculado.menorValor, experimento.maiorValor);
         case distribuicao.normal.identificador:
-            console.log(melhorDistribuicao)    
-            break
-
+            return jStat.normal.pdf(valorExperimento, experimentoCalculado.media, experimentoCalculado.desvioPadrao);
     }
 }
 
-gerarNumeroRandomico();
+console.log(gerarNumeroRandomico())
