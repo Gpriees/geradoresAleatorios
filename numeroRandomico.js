@@ -1,5 +1,5 @@
-const jStat = require('jStat').jStat;
-
+const jStat = require('jStat').jStat,
+    PD = require('probability-distributions')
 const experimento = [89, 95, 5, 37, 82, 98, 63, 76, 11, 8, 64,
     81, 13, 22, 76, 81, 13, 54, 59, 72, 11,
     54, 90, 69, 52, 38, 69, 72, 97, 26, 75,
@@ -11,14 +11,24 @@ const experimento = [89, 95, 5, 37, 82, 98, 63, 76, 11, 8, 64,
     23, 67, 99, 91, 12, 90, 48, 90, 29, 3,
     9, 76, 95, 68, 63, 4, 58, 37, 38].map(amostra => Math.round(amostra))
 
+let buscaFrequencia = (lista) => {
+    let frequencia = {};
+
+    for (let index = 0; index < lista.length; index++) {
+        let numeroEncontrado = lista[index];
+        frequencia[numeroEncontrado] = frequencia[numeroEncontrado] ? frequencia[numeroEncontrado] + 1 : 1;
+    }
+    return frequencia;
+}
+
 let experimentoCalculado = {
-    dados: experimento
-    , media: jStat.mean(experimento)
+    media: jStat.mean(experimento)
     , variancia: jStat.variance(experimento)
     , desvioPadrao: jStat.stdev(experimento)
     , maiorValor: jStat.max(experimento)
     , menorValor: jStat.min(experimento)
-    , valorMaisFrequente: jStat.mode(experimento)[0]
+    , valorMaisFrequente: jStat.mean(jStat.mode(experimento))
+    , frequencias: buscaFrequencia(experimento)
 }
 
 let distribuicao = {
@@ -36,11 +46,13 @@ let distribuicao = {
     }
 }
 
-let calculaQuiQuadrado = (amostra) => {
+let calculaQuiQuadrado = (distribuicao) => {
     let quiQuadrado = 0;
-    for (var index = 0; index < amostra.length; index++) {
-        quiQuadrado += Math.pow((amostra[index].observado - amostra[index].esperado), 2) / amostra[index].esperado
+
+    for (var index = 0; index < distribuicao.dados.length; index++) {
+        quiQuadrado += Math.pow((distribuicao.dados[index].observado - distribuicao.dados[index].esperado), 2) / distribuicao.dados[index].esperado
     }
+
     return quiQuadrado
 }
 
@@ -57,27 +69,29 @@ let obterDadosFuncaoDensidadeProbabilidade = (experimento, valorExperimento, dis
     }
 };
 
-let obterAmostraCalculadaPorDistribuicao = (distribuicaoEscolhida, experimento) => {
+let montarDadosQuiQuadradoPorDistribuicao = (distribuicaoEscolhida) => {
 
-    amostra = {
-        dados: []
-    }
+    dados = [];
 
-    for (var index = 0; index < experimento.dados.length; index++) {
-        amostra.dados.push({
-            valor: experimento.dados[index],
-            observado: obterDadosFuncaoDensidadeProbabilidade(experimento, experimento.dados[index], distribuicaoEscolhida.identificador),
-            esperado: 1 / experimento.dados.length,
+    for (valorObservado in experimento) {
+        dados.push({
+            valorBruto: Number(valorObservado)
+            , esperado: obterDadosFuncaoDensidadeProbabilidade(experimentoCalculado, Number(valorObservado), distribuicaoEscolhida.identificador)
+            , observado: experimentoCalculado.frequencias[valorObservado] === undefined ? 0 : experimentoCalculado.frequencias[valorObservado] / experimento.length
         })
     }
-    amostra.distribuicaoId = distribuicaoEscolhida.identificador;
 
-    amostra.quiQuadrado = calculaQuiQuadrado(amostra.dados);
-
-    return amostra;
+    return {
+        dados: dados,
+        distribuicaoId: distribuicaoEscolhida.identificador
+    };
 }
 
 let obterMelhorDistribuicao = (distribuicoes) => {
+
+    for (var index = 0; index < distribuicoes.length; index++) {
+        distribuicoes[index].quiQuadrado = calculaQuiQuadrado(distribuicoes[index]);
+    }
 
     let menorQuiQuadrado = jStat.min(distribuicoes.map(distribuicao => distribuicao.quiQuadrado))
 
@@ -87,23 +101,23 @@ let obterMelhorDistribuicao = (distribuicoes) => {
 
 let gerarNumeroRandomico = () => {
 
-    const poisson = obterAmostraCalculadaPorDistribuicao(distribuicao.poisson, experimentoCalculado)
-        , triangular = obterAmostraCalculadaPorDistribuicao(distribuicao.triangular, experimentoCalculado)
-        , uniforme = obterAmostraCalculadaPorDistribuicao(distribuicao.uniforme, experimentoCalculado)
-        , normal = obterAmostraCalculadaPorDistribuicao(distribuicao.normal, experimentoCalculado);
+    let poisson = montarDadosQuiQuadradoPorDistribuicao(distribuicao.poisson, experimentoCalculado)
+        , triangular = montarDadosQuiQuadradoPorDistribuicao(distribuicao.triangular, experimentoCalculado)
+        , uniforme = montarDadosQuiQuadradoPorDistribuicao(distribuicao.uniforme, experimentoCalculado)
+        , normal = montarDadosQuiQuadradoPorDistribuicao(distribuicao.normal, experimentoCalculado);
 
     let melhorDistribuicao = obterMelhorDistribuicao([poisson, triangular, uniforme, normal]);
 
     let valorExperimento = Math.floor(Math.random() * 100) + 1;
     switch (melhorDistribuicao.distribuicaoId) {
         case distribuicao.poisson.identificador:
-            return jStat.poisson.pdf(valorExperimento, experimentoCalculado.media);
+            return Math.floor(PD.rpois(1, experimentoCalculado.variancia)[0])
         case distribuicao.triangular.identificador:
             return jStat.triangular.pdf(valorExperimento, experimentoCalculado.menorValor, experimentoCalculado.maiorValor, experimentoCalculado.valorMaisFrequente);
         case distribuicao.uniforme.identificador:
-            return jStat.uniform.pdf(valorExperimento, experimentoCalculado.menorValor, experimento.maiorValor);
+            return Math.floor(PD.runif(1, 1, 100)[0])
         case distribuicao.normal.identificador:
-            return jStat.normal.pdf(valorExperimento, experimentoCalculado.media, experimentoCalculado.desvioPadrao);
+            return Math.floor(PD.rnorm(1, experimentoCalculado.media, experimentoCalculado.desvioPadrao))
     }
 }
 
